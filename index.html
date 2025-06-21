@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>RPS Card Duel - Multiplayer</title>
+  <title>RPS Card Duel - Single Player</title>
   <style>
     @font-face {
       font-family: 'Antaresia';
@@ -67,8 +67,8 @@
       pointer-events: none;
     }
 
-    /* Lobby Screen */
-    .lobby {
+    /* Start Screen */
+    .start-screen {
       position: fixed;
       top: 50%;
       left: 50%;
@@ -83,7 +83,7 @@
       min-width: 400px;
     }
 
-    .lobby h2 {
+    .start-screen h2 {
       color: #ffe868;
       margin-bottom: 30px;
       font-size: 2.5rem;
@@ -93,7 +93,7 @@
       letter-spacing: 2px;
     }
 
-    .lobby input {
+    .start-screen input {
       width: 100%;
       padding: 15px;
       margin: 10px 0;
@@ -105,11 +105,11 @@
       font-family: 'Luxembourg', Arial, sans-serif;
     }
 
-    .lobby input::placeholder {
+    .start-screen input::placeholder {
       color: rgba(255,255,255,0.7);
     }
 
-    .lobby button {
+    .start-screen button {
       background: linear-gradient(135deg, #53d253 0%, #32CD32 100%);
       color: white;
       border: 2px solid #d3c577;
@@ -125,30 +125,13 @@
       width: 200px;
     }
 
-    .lobby button:hover {
+    .start-screen button:hover {
       background: linear-gradient(135deg, #32CD32 0%, #228B22 100%);
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
 
-    .lobby button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .game-code {
-      background: rgba(255,255,255,0.1);
-      padding: 15px;
-      border-radius: 10px;
-      margin: 15px 0;
-      font-size: 1.3rem;
-      letter-spacing: 2px;
-      color: #FFD700;
-      border: 2px solid #FFD700;
-    }
-
-    /* Health bars moved to top left corner */
+    /* Health bars in top left corner */
     .health-info {
       position: absolute;
       top: 40px;
@@ -213,7 +196,7 @@
     .health {
       height: 70%;
       background: linear-gradient(90deg, #ff0000 0%, #ff6600 50%, #00ff00 100%);
-      width: 60%;
+      width: 100%;
       transition: width 0.5s ease;
       box-shadow: 0 0 10px rgba(0,255,0,0.5);
     }
@@ -237,7 +220,6 @@
       margin-top: 8px;
     }
 
-    /* Reduced card size */
     .card {
       width: 100px;
       height: 150px;
@@ -320,7 +302,6 @@
       opacity: 40%;
     }
 
-    /* Reduced arena card size */
     .arena-card {
       width: 80px;
       height: 120px;
@@ -447,55 +428,68 @@
       transform: rotateY(0deg) !important;
     }
 
-    .waiting-indicator {
-      position: absolute;
-      top: 50%;
-      right: 40px;
-      transform: translateY(-50%);
-      background: rgba(255,215,0,0.2);
-      padding: 15px;
-      border-radius: 10px;
-      border: 2px solid #FFD700;
-      color: #FFD700;
-      font-weight: 600;
-    }
-
     .hidden {
       display: none !important;
+    }
+
+    .score-display {
+      position: absolute;
+      top: 40px;
+      right: 40px;
+      background: rgba(0,0,0,0.7);
+      padding: 20px;
+      border-radius: 15px;
+      border: 2px solid #FFD700;
+      text-align: center;
+      z-index: 10;
+    }
+
+    .score-display h3 {
+      color: #FFD700;
+      margin: 0 0 15px 0;
+      font-family: 'Antaresia', Arial, sans-serif;
+      font-size: 1.5rem;
+    }
+
+    .score-item {
+      display: flex;
+      justify-content: space-between;
+      margin: 8px 0;
+      font-family: 'Luxembourg', Arial, sans-serif;
+      font-size: 1.1rem;
+    }
+
+    .score-item span:first-child {
+      color: #e6e274;
+      margin-right: 20px;
+    }
+
+    .score-item span:last-child {
+      color: #fff;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <!-- Lobby Screen -->
-  <div class="lobby" id="lobby">
+  <!-- Start Screen -->
+  <div class="start-screen" id="start-screen">
     <h2>rock paper scissors</h2>
-    <div id="lobby-content">
-      <input type="text" id="player-name" placeholder="Enter your name" maxlength="20">
-      <div>
-        <button id="create-game-btn">Create Game</button>
-        <button id="join-game-btn">Join Game</button>
-      </div>
-      <div id="join-section" class="hidden">
-        <input type="text" id="game-code-input" placeholder="Enter game code" maxlength="6">
-        <button id="join-btn">Join</button>
-      </div>
-      <div id="waiting-section" class="hidden">
-        <div class="game-code">Game Code: <span id="display-code"></span></div>
-        <p>Waiting for opponent to join...</p>
-      </div>
+    <input type="text" id="player-name" placeholder="Enter your name" maxlength="20">
+    <div>
+      <button id="start-game-btn">Start Game</button>
     </div>
   </div>
 
   <div class="poker-table">
     
-    <!-- Health info moved to top left corner -->
+    <!-- Health info in top left corner -->
     <div class="health-info">
       <div class="player-info">
-        <div class="player-label" id="opponent-label">Opponent</div>
+        <div class="player-label">Computer</div>
         <div class="health-container">
-          <div class="health-text" id="opponent-health-text">100</div>
+          <div class="health-text" id="computer-health-text">100</div>
           <div class="health-bar">
-            <div class="health" id="opponent-health"></div>
+            <div class="health" id="computer-health"></div>
           </div>
         </div>
       </div>
@@ -510,8 +504,25 @@
         </div>
       </div>
     </div>
+
+    <!-- Score Display -->
+    <div class="score-display">
+      <h3>Score</h3>
+      <div class="score-item">
+        <span>Wins:</span>
+        <span id="wins-count">0</span>
+      </div>
+      <div class="score-item">
+        <span>Losses:</span>
+        <span id="losses-count">0</span>
+      </div>
+      <div class="score-item">
+        <span>Draws:</span>
+        <span id="draws-count">0</span>
+      </div>
+    </div>
     
-    <!-- Opponent Player (Top) -->
+    <!-- Computer Player (Top) -->
     <div class="player-section player-top">
       <div class="card-hand opponent-cards">
         <div class="card">
@@ -538,16 +549,11 @@
     <!-- Arena -->
     <div class="arena">
       <div class="arena-card" id="player-arena-card"></div>
-      <div class="arena-card" id="opponent-arena-card"></div>
+      <div class="arena-card" id="computer-arena-card"></div>
     </div>
 
     <!-- Round Result Display -->
     <div class="round-result" id="round-result"></div>
-
-    <!-- Waiting Indicator -->
-    <div class="waiting-indicator hidden" id="waiting-indicator">
-      Waiting for opponent...
-    </div>
 
     <!-- Human Player (Bottom) -->
     <div class="player-section player-bottom">
@@ -573,339 +579,147 @@
       </div>
     </div>
 
-    <div class="status" id="status">Waiting to start game...</div>
+    <div class="status" id="status">Enter your name and click Start Game!</div>
   </div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
   <script>
-    // Firebase configuration - Replace with your own config
-  const firebaseConfig = {
-  apiKey: "AIzaSyDuW4yHg-NRa6B8o78mE6M0vkiZESMvBrQ",
-  authDomain: "rpsgame-b2c51.firebaseapp.com",
-  databaseURL: "https://rpsgame-b2c51-default-rtdb.firebaseio.com",
-  projectId: "rpsgame-b2c51",
-  storageBucket: "rpsgame-b2c51.appspot.com",
-  messagingSenderId: "545614744833",
-  appId: "1:545614744833:web:786faca1a9b03ae9e71f00",
-  measurementId: "G-XNK7DWSTHY"
-};
-
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
-
-    class MultiplayerRPSGame {
+    class SinglePlayerRPSGame {
       constructor() {
-        this.gameCode = null;
-        this.playerId = null;
         this.playerName = '';
-        this.isHost = false;
-        this.gameRef = null;
         this.playerHealth = 100;
-        this.opponentHealth = 100;
+        this.computerHealth = 100;
         this.gameOver = false;
-        this.waitingForOpponent = false;
+        this.wins = 0;
+        this.losses = 0;
+        this.draws = 0;
         
         // DOM elements
-        this.lobby = document.getElementById('lobby');
+        this.startScreen = document.getElementById('start-screen');
         this.playerCards = document.querySelectorAll('.player-card');
         this.status = document.getElementById('status');
         this.playerArenaCard = document.getElementById('player-arena-card');
-        this.opponentArenaCard = document.getElementById('opponent-arena-card');
+        this.computerArenaCard = document.getElementById('computer-arena-card');
         this.roundResult = document.getElementById('round-result');
-        this.waitingIndicator = document.getElementById('waiting-indicator');
         
         this.moves = ['rock', 'paper', 'scissors'];
-        this.initLobby();
+        this.initStartScreen();
       }
 
-      initLobby() {
-        document.getElementById('create-game-btn').addEventListener('click', () => this.createGame());
-        document.getElementById('join-game-btn').addEventListener('click', () => this.showJoinSection());
-        document.getElementById('join-btn').addEventListener('click', () => this.joinGame());
+      initStartScreen() {
+        document.getElementById('start-game-btn').addEventListener('click', () => this.startGame());
         
-        // Generate unique player ID
-        this.playerId = 'player_' + Math.random().toString(36).substr(2, 9);
+        // Allow Enter key to start game
+        document.getElementById('player-name').addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            this.startGame();
+          }
+        });
       }
 
-      generateGameCode() {
-        return Math.random().toString(36).substr(2, 6).toUpperCase();
-      }
-
-      async createGame() {
+      startGame() {
         this.playerName = document.getElementById('player-name').value.trim();
         if (!this.playerName) {
           alert('Please enter your name');
           return;
         }
 
-        this.gameCode = this.generateGameCode();
-        this.isHost = true;
-        
-        try {
-          this.gameRef = database.ref('games/' + this.gameCode);
-          
-          await this.gameRef.set({
-            host: {
-              id: this.playerId,
-              name: this.playerName,
-              health: 100,
-              move: null,
-              ready: false
-            },
-            guest: null,
-            gameState: 'waiting',
-            round: 0,
-            lastRoundResult: null
-          });
-
-          this.showWaitingScreen();
-          this.listenForGameChanges();
-        } catch (error) {
-          console.error('Error creating game:', error);
-          alert('Failed to create game. Please check your Firebase configuration.');
-        }
-      }
-
-      showJoinSection() {
-        document.getElementById('join-section').classList.remove('hidden');
-      }
-
-      async joinGame() {
-        this.playerName = document.getElementById('player-name').value.trim();
-        const gameCode = document.getElementById('game-code-input').value.trim().toUpperCase();
-        
-        if (!this.playerName || !gameCode) {
-          alert('Please enter your name and game code');
-          return;
-        }
-
-        this.gameCode = gameCode;
-        this.isHost = false;
-        
-        try {
-          this.gameRef = database.ref('games/' + this.gameCode);
-          
-          // Check if game exists
-          const snapshot = await this.gameRef.once('value');
-          if (!snapshot.exists()) {
-            alert('Game not found');
-            return;
-          }
-
-          const gameData = snapshot.val();
-          if (gameData.guest) {
-            alert('Game is full');
-            return;
-          }
-
-          // Join as guest
-          await this.gameRef.update({
-            guest: {
-              id: this.playerId,
-              name: this.playerName,
-              health: 100,
-              move: null,
-              ready: false
-            },
-            gameState: 'playing'
-          });
-
-          this.startGame();
-          this.listenForGameChanges();
-        } catch (error) {
-          console.error('Error joining game:', error);
-          alert('Failed to join game. Please check the game code.');
-        }
-      }
-
-      showWaitingScreen() {
-        document.getElementById('lobby-content').innerHTML = `
-          <div class="game-code">Game Code: ${this.gameCode}</div>
-          <p>Waiting for opponent to join...</p>
-        `;
-      }
-
-      startGame() {
-        this.lobby.classList.add('hidden');
+        this.startScreen.classList.add('hidden');
         this.initGame();
       }
 
-      listenForGameChanges() {
-        this.gameRef.on('value', (snapshot) => {
-          const gameData = snapshot.val();
-          if (!gameData) return;
-
-          // Update opponent info
-          const opponent = this.isHost ? gameData.guest : gameData.host;
-          const player = this.isHost ? gameData.host : gameData.guest;
-
-          if (opponent) {
-            document.getElementById('opponent-label').textContent = opponent.name;
-            this.opponentHealth = opponent.health;
-            this.updateHealthDisplay();
-          }
-
-          if (player) {
-            this.playerHealth = player.health;
-            this.updateHealthDisplay();
-          }
-
-          // Check if both players joined
-          if (gameData.gameState === 'playing' && gameData.host && gameData.guest && this.lobby && !this.lobby.classList.contains('hidden')) {
-            this.startGame();
-          }
-
-          // Check for round results
-          if (gameData.lastRoundResult && gameData.round > this.currentRound) {
-            this.currentRound = gameData.round;
-            this.processRoundResult(gameData.lastRoundResult);
-          }
-
-          // Check if both players made moves
-          if (gameData.host && gameData.guest && gameData.host.move && gameData.guest.move && gameData.host.ready && gameData.guest.ready) {
-            this.resolveRound(gameData);
-          }
-
-          // Check for game over
-          if (gameData.gameState === 'finished') {
-            this.handleGameOver(gameData);
-          }
-        });
-      }
-
       initGame() {
-        this.currentRound = 0;
         this.playerCards.forEach(card => {
           card.addEventListener('click', (e) => this.playRound(e));
         });
+        
         this.updateHealthDisplay();
-        this.status.textContent = "Choose your card to begin the duel!";
+        this.updateScoreDisplay();
         document.getElementById('player-label').textContent = this.playerName;
+        this.status.textContent = "Choose your card to begin the duel!";
       }
 
       async playRound(e) {
-        if (this.gameOver || this.waitingForOpponent) return;
+        if (this.gameOver) return;
         
         const playerMove = e.currentTarget.dataset.value;
-        this.waitingForOpponent = true;
+        const computerMove = this.getComputerMove();
         
-        // Disable cards and show waiting
+        // Disable cards during round
         this.setCardsEnabled(false);
-        this.waitingIndicator.classList.remove('hidden');
-        this.status.textContent = "Waiting for opponent's move...";
+        this.status.textContent = "Computer is choosing...";
         
-        // Update player's move in Firebase
-        const playerPath = this.isHost ? 'host' : 'guest';
-        await this.gameRef.child(playerPath).update({
-          move: playerMove,
-          ready: true
-        });
+        // Show computer "thinking" for a moment
+        await this.delay(800);
+        
+        this.resolveRound(playerMove, computerMove);
       }
 
-      async resolveRound(gameData) {
-        if (this.isHost) {
-          // Only host resolves the round to avoid conflicts
-          const hostMove = gameData.host.move;
-          const guestMove = gameData.guest.move;
-          
-          const result = this.determineWinner(hostMove, guestMove);
-          
-          let newHostHealth = gameData.host.health;
-          let newGuestHealth = gameData.guest.health;
-          
-          if (result === 'host') {
-            newGuestHealth = Math.max(0, newGuestHealth - 20);
-          } else if (result === 'guest') {
-            newHostHealth = Math.max(0, newHostHealth - 20);
-          }
-          
-          const roundResult = {
-            hostMove,
-            guestMove,
-            winner: result,
-            hostHealth: newHostHealth,
-            guestHealth: newGuestHealth
-          };
-          
-          // Update game state
-          await this.gameRef.update({
-            'host/health': newHostHealth,
-            'guest/health': newGuestHealth,
-            'host/move': null,
-            'guest/move': null,
-            'host/ready': false,
-            'guest/ready': false,
-            lastRoundResult: roundResult,
-            round: gameData.round + 1,
-            gameState: (newHostHealth <= 0 || newGuestHealth <= 0) ? 'finished' : 'playing'
-          });
+      getComputerMove() {
+        const randomIndex = Math.floor(Math.random() * this.moves.length);
+        return this.moves[randomIndex];
+      }
+
+      async resolveRound(playerMove, computerMove) {
+        // Show cards in arena
+        this.showArenaCards(playerMove, computerMove);
+        
+        await this.delay(1000);
+        
+        const result = this.determineWinner(playerMove, computerMove);
+        let roundResultText = '';
+        let message = '';
+        
+        if (result === 'draw') {
+          message = `Draw! Both played ${playerMove}`;
+          roundResultText = 'Draw';
+          this.draws++;
+        } else if (result === 'player') {
+          message = `You win! ${playerMove} beats ${computerMove}`;
+          roundResultText = 'You Win!';
+          this.computerHealth = Math.max(0, this.computerHealth - 20);
+          this.wins++;
+        } else {
+          message = `Computer wins! ${computerMove} beats ${playerMove}`;
+          roundResultText = 'You Lose!';
+          this.playerHealth = Math.max(0, this.playerHealth - 20);
+          this.losses++;
+        }
+        
+        this.status.textContent = message;
+        this.showRoundResult(roundResultText);
+        this.updateHealthDisplay();
+        this.updateScoreDisplay();
+        
+        // Check for game over
+        if (this.playerHealth <= 0 || this.computerHealth <= 0) {
+          this.gameOver = true;
+          await this.delay(2500);
+          this.handleGameOver();
+        } else {
+          await this.delay(2500);
+          this.hideArenaCards();
+          this.hideRoundResult();
+          this.setCardsEnabled(true);
+          this.status.textContent = "Choose your next card!";
         }
       }
 
-      processRoundResult(result) {
-        this.waitingForOpponent = false;
-        this.waitingIndicator.classList.add('hidden');
-        
-        const playerMove = this.isHost ? result.hostMove : result.guestMove;
-        const opponentMove = this.isHost ? result.guestMove : result.hostMove;
-        
-        // Show cards in arena
-        this.showArenaCards(playerMove, opponentMove);
-        
-        setTimeout(() => {
-          let roundResultText = '';
-          let message = '';
-          
-          if (result.winner === 'draw') {
-            message = `Draw! Both played ${playerMove}`;
-            roundResultText = 'Draw';
-          } else {
-            const playerWon = (this.isHost && result.winner === 'host') || (!this.isHost && result.winner === 'guest');
-            if (playerWon) {
-              message = `You win! ${playerMove} beats ${opponentMove}`;
-              roundResultText = 'Won';
-            } else {
-              message = `Opponent wins! ${opponentMove} beats ${playerMove}`;
-              roundResultText = 'Lost';
-            }
-          }
-          
-          this.status.textContent = message;
-          this.showRoundResult(roundResultText);
-          this.updateHealthDisplay();
-          
-          setTimeout(() => {
-            this.hideArenaCards();
-            this.hideRoundResult();
-            if (!this.gameOver) {
-              this.setCardsEnabled(true);
-              this.status.textContent = "Choose your next card!";
-            }
-          }, 2500);
-        }, 1000);
-      }
-
-      showArenaCards(playerMove, opponentMove) {
+      showArenaCards(playerMove, computerMove) {
         this.playerArenaCard.className = `arena-card ${playerMove}`;
-        this.opponentArenaCard.className = `arena-card ${opponentMove}`;
+        this.computerArenaCard.className = `arena-card ${computerMove}`;
         
         setTimeout(() => {
           this.playerArenaCard.classList.add('show');
-          this.opponentArenaCard.classList.add('show');
+          this.computerArenaCard.classList.add('show');
         }, 100);
       }
 
       hideArenaCards() {
         this.playerArenaCard.classList.remove('show');
-        this.opponentArenaCard.classList.remove('show');
+        this.computerArenaCard.classList.remove('show');
         setTimeout(() => {
           this.playerArenaCard.className = 'arena-card';
-          this.opponentArenaCard.className = 'arena-card';
+          this.computerArenaCard.className = 'arena-card';
         }, 500);
       }
 
@@ -920,8 +734,8 @@
         this.roundResult.classList.remove('show');
       }
 
-      determineWinner(move1, move2) {
-        if (move1 === move2) return 'draw';
+      determineWinner(playerMove, computerMove) {
+        if (playerMove === computerMove) return 'draw';
         
         const winConditions = {
           rock: 'scissors',
@@ -929,25 +743,29 @@
           scissors: 'paper'
         };
         
-        if (winConditions[move1] === move2) return 'host';
-        return 'guest';
+        if (winConditions[playerMove] === computerMove) return 'player';
+        return 'computer';
       }
 
       updateHealthDisplay() {
         document.getElementById('player-health').style.width = this.playerHealth + '%';
-        document.getElementById('opponent-health').style.width = this.opponentHealth + '%';
+        document.getElementById('computer-health').style.width = this.computerHealth + '%';
         document.getElementById('player-health-text').textContent = this.playerHealth;
-        document.getElementById('opponent-health-text').textContent = this.opponentHealth;
+        document.getElementById('computer-health-text').textContent = this.computerHealth;
       }
 
-      handleGameOver(gameData) {
-        this.gameOver = true;
-        const playerWon = (this.isHost && gameData.host.health > 0) || (!this.isHost && gameData.guest.health > 0);
-        const winner = playerWon ? 'You Won The Match' : 'You Lost The Match';
+      updateScoreDisplay() {
+        document.getElementById('wins-count').textContent = this.wins;
+        document.getElementById('losses-count').textContent = this.losses;
+        document.getElementById('draws-count').textContent = this.draws;
+      }
+
+      handleGameOver() {
+        const playerWon = this.playerHealth > 0;
+        const winner = playerWon ? 'Victory!' : 'Defeat!';
+        const resultText = playerWon ? 'You Won The Match!' : 'You Lost The Match!';
         
-        setTimeout(() => {
-          this.showGameOver(winner);
-        }, 1000);
+        this.showGameOver(resultText);
       }
 
       showGameOver(winner) {
@@ -956,7 +774,8 @@
         gameOverDiv.className = 'game-over';
         gameOverDiv.innerHTML = `
           <h2>${winner}</h2>
-          <p>Final Score: You ${this.playerHealth} - ${this.opponentHealth} Opponent</p>
+          <p>Final Score: You ${this.playerHealth} - ${this.computerHealth} Computer</p>
+          <p>Wins: ${this.wins} | Losses: ${this.losses} | Draws: ${this.draws}</p>
           <button class="restart-btn" onclick="location.reload()">Play Again</button>
         `;
         document.body.appendChild(gameOverDiv);
@@ -971,11 +790,15 @@
           }
         });
       }
+
+      delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
     }
 
     // Start the game when page loads
     window.addEventListener('DOMContentLoaded', () => {
-      new MultiplayerRPSGame();
+      new SinglePlayerRPSGame();
     });
   </script>
 </body>
